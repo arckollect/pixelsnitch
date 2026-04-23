@@ -1,5 +1,5 @@
 (() => {
-  const warn = (msg, el) => console.warn(`[xstamped] ${msg}`, el ?? '');
+  const warn = (msg, el) => console.warn(`[pixelsnitch] ${msg}`, el ?? '');
 
   const upgradeImageUrl = (url) => {
     if (!url) return url;
@@ -200,5 +200,5 @@
     return raw;
   }
 
-  window.xstampedExtract = { extractPost };
+  window.pixelSnitchExtract = { extractPost };
 })();

@@ -1,5 +1,5 @@
 (() => {
-  const { BACKGROUND_PRESETS, ASPECT_RATIOS } = window.xstampedTemplates;
+  const { BACKGROUND_PRESETS, ASPECT_RATIOS } = window.pixelSnitchTemplates;
 
   const DEFAULT_SETTINGS = {
     theme: 'dark',
@@ -47,9 +47,9 @@
     if (!text) return '';
     const paras = String(text).split(/\n{2,}/);
     const html = paras.map(p =>
-      `<p class="xs-para">${esc(p).replace(/\n/g, '<br>')}</p>`
+      `<p class="ps-para">${esc(p).replace(/\n/g, '<br>')}</p>`
     ).join('');
-    return `<div class="xs-body">${html}</div>`;
+    return `<div class="ps-body">${html}</div>`;
   }
 
   function renderMedia(data) {
@@ -59,10 +59,10 @@
       const imgs = photos.slice(0, 4).map(src =>
         `<img src="${esc(src)}" alt="" crossorigin="anonymous">`
       ).join('');
-      return `<div class="xs-media count-${count}">${imgs}</div>`;
+      return `<div class="ps-media count-${count}">${imgs}</div>`;
     }
     if (data.videoPoster) {
-      return `<div class="xs-media count-1"><div class="xs-video" style="background-image:url('${esc(data.videoPoster)}');background-size:cover;background-position:center;"></div></div>`;
+      return `<div class="ps-media count-1"><div class="ps-video" style="background-image:url('${esc(data.videoPoster)}');background-size:cover;background-position:center;"></div></div>`;
     }
     return '';
   }
@@ -72,18 +72,18 @@
     const rows = poll.options.map(opt => {
       const pct = opt.percent ?? 0;
       return `
-        <div class="xs-poll-option">
-          <span class="xs-bar" style="width:${pct}%;"></span>
-          <span class="xs-label">${esc(opt.label)}</span>
-          <span class="xs-pct">${opt.percent != null ? pct + '%' : ''}</span>
+        <div class="ps-poll-option">
+          <span class="ps-bar" style="width:${pct}%;"></span>
+          <span class="ps-label">${esc(opt.label)}</span>
+          <span class="ps-pct">${opt.percent != null ? pct + '%' : ''}</span>
         </div>`;
     }).join('');
-    return `<div class="xs-poll">${rows}</div>`;
+    return `<div class="ps-poll">${rows}</div>`;
   }
 
   function renderVerified(show, verified) {
     if (!show || !verified) return '';
-    return `<span class="xs-verified" aria-label="verified">
+    return `<span class="ps-verified" aria-label="verified">
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" width="18" height="18">
         <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"/>
       </svg>
@@ -97,16 +97,16 @@
     const avatarSrc = settings.redact ? REDACT_AVATAR : (quote.avatar ?? REDACT_AVATAR);
     const media = renderMedia(quote);
     return `
-      <div class="xs-quote">
-        <div class="xs-head">
-          <img class="xs-avatar" src="${esc(avatarSrc)}" alt="" crossorigin="anonymous">
-          <div class="xs-head-meta">
-            <div class="xs-name-row">
-              <span class="xs-name">${esc(displayName)}</span>
+      <div class="ps-quote">
+        <div class="ps-head">
+          <img class="ps-avatar" src="${esc(avatarSrc)}" alt="" crossorigin="anonymous">
+          <div class="ps-head-meta">
+            <div class="ps-name-row">
+              <span class="ps-name">${esc(displayName)}</span>
               ${renderVerified(settings.showVerified, quote.verified)}
-              <span class="xs-handle">${esc(handle)}</span>
+              <span class="ps-handle">${esc(handle)}</span>
             </div>
-            ${settings.showTimestamp && quote.datetime ? `<span class="xs-time">${esc(formatDate(quote.datetime))}</span>` : ''}
+            ${settings.showTimestamp && quote.datetime ? `<span class="ps-time">${esc(formatDate(quote.datetime))}</span>` : ''}
           </div>
         </div>
         ${renderBody(quote.text)}
@@ -118,14 +118,14 @@
     const displayName = settings.redact ? 'User' : (data.displayName ?? '');
     const handle = settings.redact ? '@user' : (data.handle ?? '');
     const avatarSrc = settings.redact ? REDACT_AVATAR : (data.avatar ?? REDACT_AVATAR);
-    const time = settings.showTimestamp && data.datetime ? `<div class="xs-time-row"><span class="xs-time">${esc(formatDate(data.datetime))}</span></div>` : '';
-    const socialRow = data.socialContext ? `<div class="xs-social">🔁 ${esc(data.socialContext)}</div>` : '';
+    const time = settings.showTimestamp && data.datetime ? `<div class="ps-time-row"><span class="ps-time">${esc(formatDate(data.datetime))}</span></div>` : '';
+    const socialRow = data.socialContext ? `<div class="ps-social">🔁 ${esc(data.socialContext)}</div>` : '';
     const media = renderMedia(data);
     const quoteHtml = renderQuote(data.quote, settings);
     const poll = renderPoll(data.poll);
 
     const counts = settings.showCounts ? `
-      <div class="xs-counts">
+      <div class="ps-counts">
         <span><b>${esc(data.counts?.reply ?? '0')}</b>Replies</span>
         <span><b>${esc(data.counts?.retweet ?? '0')}</b>Reposts</span>
         <span><b>${esc(data.counts?.like ?? '0')}</b>Likes</span>
@@ -133,13 +133,13 @@
 
     return `
       ${socialRow}
-      <div class="xs-head">
-        <img class="xs-avatar" src="${esc(avatarSrc)}" alt="" crossorigin="anonymous">
-        <div class="xs-head-meta">
-          <div class="xs-name-row">
-            <span class="xs-name">${esc(displayName)}</span>
+      <div class="ps-head">
+        <img class="ps-avatar" src="${esc(avatarSrc)}" alt="" crossorigin="anonymous">
+        <div class="ps-head-meta">
+          <div class="ps-name-row">
+            <span class="ps-name">${esc(displayName)}</span>
             ${renderVerified(settings.showVerified, data.verified)}
-            <span class="xs-handle">${esc(handle)}</span>
+            <span class="ps-handle">${esc(handle)}</span>
           </div>
         </div>
       </div>
@@ -201,7 +201,7 @@
     quote: null,
   };
 
-  window.xstampedCard = {
+  window.pixelSnitchCard = {
     DEFAULT_SETTINGS,
     renderCard,
     applyStage,

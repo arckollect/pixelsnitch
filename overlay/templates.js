@@ -40,5 +40,5 @@
     },
   };
 
-  window.xstampedTemplates = { BACKGROUND_PRESETS, ASPECT_RATIOS, THEMES };
+  window.pixelSnitchTemplates = { BACKGROUND_PRESETS, ASPECT_RATIOS, THEMES };
 })();

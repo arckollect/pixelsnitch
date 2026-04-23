@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-  if (msg?.type === 'xstamped:open-options') {
+  if (msg?.type === 'pixelsnitch:open-options') {
     chrome.runtime.openOptionsPage(() => sendResponse({ ok: true }));
     return true; // keep channel open for async sendResponse
   }

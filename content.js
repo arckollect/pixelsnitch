@@ -1,5 +1,5 @@
 (() => {
-  const STAMP = 'data-xstamped';
+  const STAMP = 'data-pixelsnitch';
 
   const CAMERA_SVG = `
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -14,12 +14,12 @@
   }
 
   function openOptions() {
-    chrome.runtime.sendMessage({ type: 'xstamped:open-options' }).catch(() => {});
+    chrome.runtime.sendMessage({ type: 'pixelsnitch:open-options' }).catch(() => {});
   }
 
   function makeButton() {
     const wrap = document.createElement('div');
-    wrap.setAttribute('data-xstamped-btn', '1');
+    wrap.setAttribute('data-pixelsnitch-btn', '1');
     wrap.style.cssText = [
       'display:inline-flex',
       'align-items:center',
@@ -31,7 +31,7 @@
 
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.title = 'Capture as PNG (xstamped)';
+    btn.title = 'Capture as PNG (PixelSnitch)';
     btn.setAttribute('aria-label', 'Capture post as PNG');
     btn.innerHTML = CAMERA_SVG;
     btn.style.cssText = [
@@ -70,12 +70,12 @@
         openOptions();
         return;
       }
-      const data = await window.xstampedExtract.extractPost(article);
-      await window.xstampedCapture.captureAndDownload(data);
+      const data = await window.pixelSnitchExtract.extractPost(article);
+      await window.pixelSnitchCapture.captureAndDownload(data);
       btn.innerHTML = '<span style="font-size:14px;line-height:1;">✓</span>';
       setTimeout(() => { btn.innerHTML = original; }, 900);
     } catch (err) {
-      console.error('[xstamped] capture failed', err);
+      console.error('[pixelsnitch] capture failed', err);
       btn.innerHTML = '<span style="font-size:14px;line-height:1;">!</span>';
       setTimeout(() => { btn.innerHTML = original; }, 1200);
     } finally {

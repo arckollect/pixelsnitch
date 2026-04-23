@@ -1,5 +1,5 @@
 (() => {
-  const { renderCard, applyStage, DEFAULT_SETTINGS } = window.xstampedCard;
+  const { renderCard, applyStage, DEFAULT_SETTINGS } = window.pixelSnitchCard;
 
   let cachedCss = null;
   let cachedFontDataUrl = null;
@@ -66,8 +66,8 @@
     const shadow = host.attachShadow({ mode: 'open' });
     shadow.innerHTML = `
       <style>${css}</style>
-      <div class="xs-stage" data-role="stage">
-        <div class="xs-card theme-dark" data-role="card"></div>
+      <div class="ps-stage" data-role="stage">
+        <div class="ps-card theme-dark" data-role="card"></div>
       </div>
     `;
     const stage = shadow.querySelector('[data-role="stage"]');
@@ -80,7 +80,7 @@
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
-      await window.xstampedRender.downloadFromNode(stage, {
+      await window.pixelSnitchRender.downloadFromNode(stage, {
         handle: data.handle,
         tweetId: data.tweetId,
       });
@@ -89,5 +89,5 @@
     }
   }
 
-  window.xstampedCapture = { captureAndDownload };
+  window.pixelSnitchCapture = { captureAndDownload };
 })();

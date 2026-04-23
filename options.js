@@ -1,6 +1,6 @@
 (() => {
-  const { BACKGROUND_PRESETS, ASPECT_RATIOS } = window.xstampedTemplates;
-  const { DEFAULT_SETTINGS, renderCard, applyStage, SAMPLE_DATA } = window.xstampedCard;
+  const { BACKGROUND_PRESETS, ASPECT_RATIOS } = window.pixelSnitchTemplates;
+  const { DEFAULT_SETTINGS, renderCard, applyStage, SAMPLE_DATA } = window.pixelSnitchCard;
 
   const qs = new URLSearchParams(location.search);
   const isFirstRun = qs.get('firstrun') === '1';
@@ -341,10 +341,10 @@
     el.stage.style.transform = '';
     try {
       if (document.fonts?.ready) await document.fonts.ready;
-      await window.xstampedRender.downloadFromNode(el.stage, { handle: 'sample', tweetId: 'preview' });
+      await window.pixelSnitchRender.downloadFromNode(el.stage, { handle: 'sample', tweetId: 'preview' });
       flashSaved('Sample downloaded');
     } catch (err) {
-      console.error('[xstamped] test render failed', err);
+      console.error('[pixelsnitch] test render failed', err);
       flashSaved('Test render failed');
     } finally {
       el.stage.style.transform = prevTransform;

@@ -2,7 +2,7 @@
   function safeName(handle, tweetId) {
     const h = (handle ?? 'x').replace(/^@/, '').replace(/[^a-zA-Z0-9_-]/g, '');
     const id = tweetId ?? Date.now();
-    return `xstamped-${h || 'x'}-${id}.png`;
+    return `pixelsnitch-${h || 'x'}-${id}.png`;
   }
 
   async function renderNodeToBlob(node, opts = {}) {
@@ -48,7 +48,7 @@
     return blob;
   }
 
-  window.xstampedRender = {
+  window.pixelSnitchRender = {
     renderNodeToBlob,
     downloadBlob,
     copyBlobToClipboard,
