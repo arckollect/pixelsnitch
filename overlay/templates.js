@@ -9,6 +9,7 @@
     { id: 'lime',      name: 'Lime',           css: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)' },
     { id: 'mesh-rose', name: 'Rose Mesh',      css: 'radial-gradient(at 20% 30%, #ff9a9e 0px, transparent 50%), radial-gradient(at 80% 0%, #fad0c4 0px, transparent 50%), radial-gradient(at 0% 100%, #fbc2eb 0px, transparent 50%), radial-gradient(at 100% 100%, #a18cd1 0px, transparent 50%), #ffdde1' },
     { id: 'mesh-cool', name: 'Cool Mesh',      css: 'radial-gradient(at 20% 30%, #84fab0 0px, transparent 50%), radial-gradient(at 80% 0%, #8fd3f4 0px, transparent 50%), radial-gradient(at 0% 100%, #cfd9df 0px, transparent 50%), radial-gradient(at 100% 100%, #a1c4fd 0px, transparent 50%), #c2e9fb' },
+    { id: 'sky',       name: 'Sky',            css: 'radial-gradient(ellipse at center, #ffffff 0%, #d8ecf7 55%, #a8d0e8 100%)' },
   ];
 
   const ASPECT_RATIOS = [

@@ -6,6 +6,38 @@
     return url.replace(/&name=\w+$/, '&name=large');
   };
 
+  const upgradeAvatarUrl = (url) => {
+    if (!url) return url;
+    return url.replace(/_normal\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i, '_400x400.$1$2');
+  };
+
+  // Walks a tweetText node and returns its visible text. Avoids three quirks of
+  // `.innerText`: it drops <img alt="🚨"> emojis, pulls in aria-hidden "http://"
+  // link prefixes, and injects \n at inline-block boundaries.
+  function extractTweetText(el) {
+    if (!el) return '';
+    let out = '';
+    const visit = (node) => {
+      if (!node) return;
+      if (node.nodeType === Node.TEXT_NODE) {
+        out += node.nodeValue;
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      if (node.getAttribute('aria-hidden') === 'true') return;
+      const tag = node.tagName;
+      if (tag === 'BR') { out += '\n'; return; }
+      if (tag === 'IMG') {
+        const alt = node.getAttribute('alt');
+        if (alt) out += alt;
+        return;
+      }
+      for (const child of node.childNodes) visit(child);
+    };
+    visit(el);
+    return out;
+  }
+
   async function urlToDataUrl(url) {
     if (!url) return null;
     try {
@@ -83,8 +115,8 @@
       displayName,
       handle,
       datetime: innerTime,
-      text: innerText?.innerText ?? '',
-      avatar: innerAvatar,
+      text: extractTweetText(innerText),
+      avatar: upgradeAvatarUrl(innerAvatar),
       photos: [...node.querySelectorAll('[data-testid="tweetPhoto"] img')].map(i => upgradeImageUrl(i.src)),
       verified: !!node.querySelector('[data-testid="icon-verified"]'),
     };
@@ -130,8 +162,8 @@
       displayName: userNameEl?.innerText.split('\n')[0] ?? null,
       handle: handleLink?.innerText.trim() ?? null,
       datetime: timeEl?.getAttribute('datetime') ?? null,
-      text: tweetTextEl?.innerText ?? '',
-      avatar: avatarEl?.src ?? null,
+      text: extractTweetText(tweetTextEl),
+      avatar: upgradeAvatarUrl(avatarEl?.src ?? null),
       photos,
       verified: !!article.querySelector('[data-testid="icon-verified"]'),
       counts,

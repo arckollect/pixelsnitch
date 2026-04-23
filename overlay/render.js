@@ -6,7 +6,7 @@
   }
 
   async function renderNodeToBlob(node, opts = {}) {
-    const pixelRatio = opts.pixelRatio ?? 2;
+    const pixelRatio = opts.pixelRatio ?? 4;
     return await window.htmlToImage.toBlob(node, {
       pixelRatio,
       cacheBust: true,
