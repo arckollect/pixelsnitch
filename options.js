@@ -50,6 +50,8 @@
     saveBtn:      document.getElementById('save'),
     savedNote:    document.getElementById('saved-note'),
     testBtn:      document.getElementById('test-render'),
+    replayTourBtn: document.getElementById('replay-tour'),
+    uiThemeToggle: document.getElementById('ui-theme-toggle'),
   };
 
   const state = {
@@ -348,14 +350,22 @@
 
   el.testBtn.addEventListener('click', async () => {
     el.testBtn.disabled = true;
-    const prevTransform = el.stage.style.transform;
-    el.stage.style.transform = '';
+    const clone = el.stage.cloneNode(true);
+    clone.style.transform = '';
+    clone.style.transformOrigin = '';
+    clone.style.position = 'fixed';
+    clone.style.left = '-10000px';
+    clone.style.top = '0';
+    clone.style.pointerEvents = 'none';
+    clone.style.zIndex = '-1';
+    document.body.appendChild(clone);
     try {
       if (document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       const meta = isEditMode && state.editData
         ? { handle: state.editData.handle, tweetId: state.editData.tweetId }
         : { handle: 'sample', tweetId: 'preview' };
-      await window.pixelSnitchRender.downloadFromNode(el.stage, meta);
+      await window.pixelSnitchRender.downloadFromNode(clone, meta);
       if (isEditMode) {
         await new Promise(r => chrome.storage.local.remove('pendingCapture', r));
         window.close();
@@ -366,9 +376,20 @@
       console.error('[pixelsnitch] test render failed', err);
       flashSaved('Export failed');
     } finally {
-      el.stage.style.transform = prevTransform;
+      clone.remove();
       el.testBtn.disabled = false;
     }
+  });
+
+  el.replayTourBtn.addEventListener('click', () => {
+    window.pixelSnitchTour?.start();
+  });
+
+  el.uiThemeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-ui-theme') === 'light' ? 'light' : 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-ui-theme', next);
+    try { localStorage.setItem('pixelsnitch-ui-theme', next); } catch {}
   });
 
   window.addEventListener('resize', autoFit);
@@ -393,6 +414,11 @@
     renderStatus();
     renderControls();
     renderPreview();
+
+    if (window.pixelSnitchTour) {
+      const auto = await window.pixelSnitchTour.shouldAutoStart({ isFirstRun, isEditMode });
+      if (auto) window.pixelSnitchTour.start();
+    }
   }
 
   init();
