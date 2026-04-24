@@ -4,6 +4,7 @@
 
   const qs = new URLSearchParams(location.search);
   const isFirstRun = qs.get('firstrun') === '1';
+  const isEditMode = qs.get('edit') === '1';
 
   const el = {
     firstrun:   document.getElementById('firstrun'),
@@ -12,11 +13,10 @@
     scale:      document.getElementById('scale'),
     stage:      document.getElementById('stage'),
     card:       document.getElementById('card'),
-    qCard:      document.getElementById('q-card'),
-    qCardIcon:  document.getElementById('q-card-icon'),
-    qResponse:  document.getElementById('q-response'),
-    qSize:      document.getElementById('q-size'),
-    qVerified:  document.getElementById('q-verified'),
+    tabNav:     document.getElementById('tab-nav'),
+    tabBtns:    document.querySelectorAll('.tab-btn'),
+    tabPanels:  document.querySelectorAll('.tab-panel'),
+    themeSeg:   document.getElementById('theme-seg'),
     bgGrid:     document.getElementById('bg-grid'),
     customBg:   document.getElementById('custom-bg'),
     aspectSeg:  document.getElementById('aspect-seg'),
@@ -27,6 +27,8 @@
     autoMarginSection: document.getElementById('auto-margin-section'),
     cardScale:    document.getElementById('cardscale'),
     cardScaleLbl: document.getElementById('cardscale-label'),
+    advancedToggle:  document.getElementById('advanced-toggle'),
+    advancedPanel:   document.getElementById('advanced-panel'),
     customPosition:  document.getElementById('customPosition'),
     positionCtrls:   document.getElementById('position-controls'),
     posX:      document.getElementById('posx'),
@@ -34,8 +36,12 @@
     posY:      document.getElementById('posy'),
     posYLbl:   document.getElementById('posy-label'),
     posReset:  document.getElementById('pos-reset'),
-    showTimestamp: document.getElementById('showTimestamp'),
-    redact:     document.getElementById('redact'),
+    showTimestamp:     document.getElementById('showTimestamp'),
+    showCounts:        document.getElementById('showCounts'),
+    showVerified:      document.getElementById('showVerified'),
+    showSocialContext: document.getElementById('showSocialContext'),
+    redact:            document.getElementById('redact'),
+    captureSeg:        document.getElementById('capture-seg'),
     presetSelect: document.getElementById('preset-select'),
     presetsList:  document.getElementById('presets-list'),
     presetsEmpty: document.getElementById('presets-empty'),
@@ -46,34 +52,21 @@
     testBtn:      document.getElementById('test-render'),
   };
 
-  const SIZE_STEPS = [75, 100, 125, 150];
-  const MOON_SVG = `
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>`;
-  const SUN_SVG = `
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="4"/>
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-    </svg>`;
-
   const state = {
     settings: { ...DEFAULT_SETTINGS },
     presets: [],
     isSetup: false,
+    editData: null,
   };
 
   function escHtml(s) {
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function renderQuickToggles() {
-    const s = state.settings;
-    el.qCardIcon.innerHTML = s.theme === 'dark' ? MOON_SVG : SUN_SVG;
-    el.qCard.classList.toggle('active', s.theme === 'dark');
-    el.qResponse.classList.toggle('active', !!s.showCounts);
-    el.qVerified.classList.toggle('active', !!s.showVerified);
-    el.qSize.classList.toggle('active', s.cardScale !== 100);
+  function renderTheme() {
+    el.themeSeg.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === state.settings.theme);
+    });
   }
 
   function renderBgGrid() {
@@ -110,7 +103,16 @@
 
   function renderToggles() {
     el.showTimestamp.checked = state.settings.showTimestamp;
+    el.showCounts.checked = !!state.settings.showCounts;
+    el.showVerified.checked = !!state.settings.showVerified;
+    el.showSocialContext.checked = state.settings.showSocialContext !== false;
     el.redact.checked = state.settings.redact;
+  }
+
+  function renderCaptureAction() {
+    el.captureSeg.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.capture === (state.settings.captureAction || 'download'));
+    });
   }
 
   function renderPosition() {
@@ -166,19 +168,21 @@
   }
 
   function renderPreview() {
-    el.card.innerHTML = renderCard(SAMPLE_DATA, state.settings);
+    const previewData = state.editData || SAMPLE_DATA;
+    el.card.innerHTML = renderCard(previewData, state.settings);
     applyStage(el.stage, el.card, state.settings);
     requestAnimationFrame(autoFit);
   }
 
   function renderControls() {
-    renderQuickToggles();
+    renderTheme();
     renderBgGrid();
     renderAspectSeg();
     renderCardWidthLbl();
     renderAutoMarginLbl();
     renderCardScaleLbl();
     renderToggles();
+    renderCaptureAction();
     renderPosition();
     renderPresetsUI();
   }
@@ -203,23 +207,23 @@
   }
 
   // --- Event wiring ---
-  el.qCard.addEventListener('click', () => {
-    update({ theme: state.settings.theme === 'dark' ? 'light' : 'dark' });
+  el.tabNav.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    const target = btn.dataset.tab;
+    el.tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === target));
+    el.tabPanels.forEach(p => p.classList.toggle('active', p.dataset.tabPanel === target));
   });
 
-  el.qResponse.addEventListener('click', () => {
-    update({ showCounts: !state.settings.showCounts });
+  el.themeSeg.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-theme]');
+    if (!btn) return;
+    update({ theme: btn.dataset.theme });
   });
 
-  el.qVerified.addEventListener('click', () => {
-    update({ showVerified: !state.settings.showVerified });
-  });
-
-  el.qSize.addEventListener('click', () => {
-    const curr = state.settings.cardScale;
-    const idx = SIZE_STEPS.indexOf(curr);
-    const next = SIZE_STEPS[(idx + 1) % SIZE_STEPS.length] ?? 100;
-    update({ cardScale: next });
+  el.advancedToggle.addEventListener('click', () => {
+    const open = el.advancedToggle.classList.toggle('open');
+    el.advancedPanel.style.display = open ? 'flex' : 'none';
   });
 
   el.bgGrid.addEventListener('click', (e) => {
@@ -279,8 +283,15 @@
     renderCardScaleLbl();
   });
 
-  ['showTimestamp', 'redact'].forEach(key => {
+  ['showTimestamp', 'showCounts', 'showVerified', 'showSocialContext', 'redact'].forEach(key => {
     el[key].addEventListener('change', () => update({ [key]: el[key].checked }, { renderAll: false }));
+  });
+
+  el.captureSeg.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-capture]');
+    if (!btn) return;
+    update({ captureAction: btn.dataset.capture }, { renderAll: false });
+    renderCaptureAction();
   });
 
   el.savePreset.addEventListener('click', async () => {
@@ -341,11 +352,19 @@
     el.stage.style.transform = '';
     try {
       if (document.fonts?.ready) await document.fonts.ready;
-      await window.pixelSnitchRender.downloadFromNode(el.stage, { handle: 'sample', tweetId: 'preview' });
-      flashSaved('Sample downloaded');
+      const meta = isEditMode && state.editData
+        ? { handle: state.editData.handle, tweetId: state.editData.tweetId }
+        : { handle: 'sample', tweetId: 'preview' };
+      await window.pixelSnitchRender.downloadFromNode(el.stage, meta);
+      if (isEditMode) {
+        await new Promise(r => chrome.storage.local.remove('pendingCapture', r));
+        window.close();
+      } else {
+        flashSaved('Sample downloaded');
+      }
     } catch (err) {
       console.error('[pixelsnitch] test render failed', err);
-      flashSaved('Test render failed');
+      flashSaved('Export failed');
     } finally {
       el.stage.style.transform = prevTransform;
       el.testBtn.disabled = false;
@@ -357,13 +376,20 @@
   // --- Init ---
   async function init() {
     const stored = await new Promise(r =>
-      chrome.storage.local.get(['lastSettings', 'presets', 'isSetup'], r)
+      chrome.storage.local.get(['lastSettings', 'presets', 'isSetup', 'pendingCapture'], r)
     );
     state.settings = { ...DEFAULT_SETTINGS, ...(stored.lastSettings || {}) };
     state.presets = stored.presets || [];
     state.isSetup = !!stored.isSetup;
 
-    if (isFirstRun && !state.isSetup) el.firstrun.style.display = 'flex';
+    if (isEditMode) {
+      state.editData = stored.pendingCapture?.data || null;
+      el.testBtn.textContent = 'Export PNG';
+      el.saveBtn.style.display = 'none';
+    } else {
+      if (isFirstRun && !state.isSetup) el.firstrun.style.display = 'flex';
+    }
+
     renderStatus();
     renderControls();
     renderPreview();

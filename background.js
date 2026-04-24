@@ -9,6 +9,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     chrome.runtime.openOptionsPage(() => sendResponse({ ok: true }));
     return true; // keep channel open for async sendResponse
   }
+  if (msg?.type === 'pixelsnitch:open-editor') {
+    chrome.tabs.create({ url: chrome.runtime.getURL('options.html?edit=1') });
+    return true;
+  }
 });
 
 chrome.action.onClicked.addListener(() => {
