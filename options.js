@@ -18,7 +18,10 @@
     tabPanels:  document.querySelectorAll('.tab-panel'),
     themeSeg:   document.getElementById('theme-seg'),
     bgGrid:     document.getElementById('bg-grid'),
+    bgCaption:  document.getElementById('bg-caption'),
     customBg:   document.getElementById('custom-bg'),
+    uploadFilename: document.getElementById('upload-filename'),
+    uploadClear:    document.getElementById('upload-clear'),
     aspectSeg:  document.getElementById('aspect-seg'),
     cardWidth:    document.getElementById('cardwidth'),
     cardWidthLbl: document.getElementById('cardwidth-label'),
@@ -74,11 +77,29 @@
   function renderBgGrid() {
     el.bgGrid.innerHTML = BACKGROUND_PRESETS.map(p => `
       <button class="bg-swatch ${p.id === 'none' ? 'is-none' : ''} ${state.settings.backgroundId === p.id && !state.settings.customBg ? 'active' : ''}"
-              data-bg-id="${p.id}" title="${escHtml(p.name)}"
-              style="${p.id === 'none' ? '' : `background:${p.css};`}">
-        <span class="name">${escHtml(p.name)}</span>
-      </button>
+              data-bg-id="${p.id}" data-bg-name="${escHtml(p.name)}"
+              title="${escHtml(p.name)}" aria-label="${escHtml(p.name)}"
+              style="${p.id === 'none' ? '' : `background:${p.css};`}"></button>
     `).join('');
+    renderBgCaption();
+  }
+
+  function currentBgName() {
+    if (state.settings.customBg) return 'Custom image';
+    const p = BACKGROUND_PRESETS.find(x => x.id === state.settings.backgroundId);
+    return p ? p.name : '';
+  }
+
+  function renderBgCaption(hoverName) {
+    const name = hoverName || currentBgName();
+    el.bgCaption.innerHTML = name ? `<strong>${escHtml(name)}</strong>` : '';
+  }
+
+  function renderUploadFilename() {
+    const hasCustom = !!state.settings.customBg;
+    el.uploadFilename.classList.toggle('visible', hasCustom);
+    const nameEl = el.uploadFilename.querySelector('.name');
+    if (hasCustom) nameEl.textContent = state.settings.customBgName || 'Custom image';
   }
 
   function renderAspectSeg() {
@@ -179,6 +200,7 @@
   function renderControls() {
     renderTheme();
     renderBgGrid();
+    renderUploadFilename();
     renderAspectSeg();
     renderCardWidthLbl();
     renderAutoMarginLbl();
@@ -230,15 +252,31 @@
 
   el.bgGrid.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-bg-id]');
-    if (b) update({ backgroundId: b.dataset.bgId, customBg: null });
+    if (b) update({ backgroundId: b.dataset.bgId, customBg: null, customBgName: null });
   });
+
+  el.bgGrid.addEventListener('mouseover', (e) => {
+    const b = e.target.closest('button[data-bg-id]');
+    if (b) renderBgCaption(b.dataset.bgName);
+  });
+  el.bgGrid.addEventListener('mouseleave', () => renderBgCaption());
+  el.bgGrid.addEventListener('focusin', (e) => {
+    const b = e.target.closest('button[data-bg-id]');
+    if (b) renderBgCaption(b.dataset.bgName);
+  });
+  el.bgGrid.addEventListener('focusout', () => renderBgCaption());
 
   el.customBg.addEventListener('change', () => {
     const f = el.customBg.files?.[0];
     if (!f) return;
     const r = new FileReader();
-    r.onloadend = () => update({ customBg: r.result, backgroundId: null });
+    r.onloadend = () => update({ customBg: r.result, customBgName: f.name, backgroundId: null });
     r.readAsDataURL(f);
+  });
+
+  el.uploadClear.addEventListener('click', () => {
+    el.customBg.value = '';
+    update({ customBg: null, customBgName: null, backgroundId: state.settings.backgroundId || 'none' });
   });
 
   el.aspectSeg.addEventListener('click', (e) => {
