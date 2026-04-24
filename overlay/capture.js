@@ -79,15 +79,22 @@
     if (document.fonts?.ready) await document.fonts.ready;
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
+    let mode = 'download';
     try {
-      await window.pixelSnitchRender.downloadFromNode(stage, {
-        handle: data.handle,
-        tweetId: data.tweetId,
-      });
+      if (settings.captureAction !== 'clipboard') {
+        await window.pixelSnitchRender.downloadFromNode(stage, {
+          handle: data.handle,
+          tweetId: data.tweetId,
+        });
+      } else {
+        await window.pixelSnitchRender.copyFromNode(stage);
+        mode = 'clipboard';
+      }
     } finally {
       host.remove();
     }
+    return mode;
   }
 
-  window.pixelSnitchCapture = { captureAndDownload };
+  window.pixelSnitchCapture = { captureAndDownload, loadSettings };
 })();

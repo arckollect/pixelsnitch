@@ -71,8 +71,17 @@
         return;
       }
       const data = await window.pixelSnitchExtract.extractPost(article);
-      await window.pixelSnitchCapture.captureAndDownload(data);
-      btn.innerHTML = '<span style="font-size:14px;line-height:1;">✓</span>';
+      const settings = await window.pixelSnitchCapture.loadSettings();
+      if (settings.captureAction === 'edit') {
+        await new Promise(r => chrome.storage.local.set({ pendingCapture: { data, ts: Date.now() } }, r));
+        chrome.runtime.sendMessage({ type: 'pixelsnitch:open-editor' }).catch(() => {});
+        btn.innerHTML = '<span style="font-size:14px;line-height:1;">✎</span>';
+        setTimeout(() => { btn.innerHTML = original; }, 900);
+        return;
+      }
+      const mode = await window.pixelSnitchCapture.captureAndDownload(data);
+      const glyph = mode === 'clipboard' ? '📋' : '✓';
+      btn.innerHTML = `<span style="font-size:14px;line-height:1;">${glyph}</span>`;
       setTimeout(() => { btn.innerHTML = original; }, 900);
     } catch (err) {
       console.error('[pixelsnitch] capture failed', err);

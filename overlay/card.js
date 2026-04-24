@@ -15,7 +15,9 @@
     showCounts: true,
     showTimestamp: true,
     showVerified: true,
+    showSocialContext: true,
     redact: false,
+    captureAction: 'download', // 'download' | 'edit' | 'clipboard'
   };
 
   const REDACT_AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -119,7 +121,7 @@
     const handle = settings.redact ? '@user' : (data.handle ?? '');
     const avatarSrc = settings.redact ? REDACT_AVATAR : (data.avatar ?? REDACT_AVATAR);
     const time = settings.showTimestamp && data.datetime ? `<div class="ps-time-row"><span class="ps-time">${esc(formatDate(data.datetime))}</span></div>` : '';
-    const socialRow = data.socialContext ? `<div class="ps-social">🔁 ${esc(data.socialContext)}</div>` : '';
+    const socialRow = (settings.showSocialContext !== false && data.socialContext) ? `<div class="ps-social">🔁 ${esc(data.socialContext)}</div>` : '';
     const media = renderMedia(data);
     const quoteHtml = renderQuote(data.quote, settings);
     const poll = renderPoll(data.poll);
