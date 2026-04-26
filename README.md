@@ -1,4 +1,4 @@
-# PixelSnitch
+# <img src="icons/128.png" alt="PixelSnitch logo" width="40" height="40" align="absmiddle"> PixelSnitch
 
 A Chrome extension that captures X (formerly Twitter) posts as clean, customizable PNG images — straight from your timeline, with one click.
 
