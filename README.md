@@ -77,3 +77,4 @@ PixelSnitch is an independent, unofficial project. It is **not affiliated with, 
 Posts captured with this extension are the intellectual property of their original authors. Users of PixelSnitch are **solely responsible** for how they use captured content — including compliance with copyright law, fair use, attribution conventions, and X's Terms of Service.
 
 PixelSnitch is provided **AS-IS, with no warranty** (see [LICENSE](LICENSE)).
+
