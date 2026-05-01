@@ -2,7 +2,7 @@
   const { BACKGROUND_PRESETS, ASPECT_RATIOS } = window.pixelSnitchTemplates;
 
   const DEFAULT_SETTINGS = {
-    theme: 'dark',
+    theme: 'light',
     backgroundId: 'twilight',
     customBg: null,
     aspectId: 'auto',
