@@ -3,7 +3,7 @@
 
   const DEFAULT_SETTINGS = {
     theme: 'light',
-    backgroundId: 'twilight',
+    backgroundId: 'sky',
     customBg: null,
     aspectId: 'auto',
     cardWidth: 560,
