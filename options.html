@@ -4,17 +4,7 @@
   <meta charset="utf-8">
   <title>PixelSnitch — Setup</title>
   <link rel="stylesheet" href="overlay/overlay.css">
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem('pixelsnitch-ui-theme');
-        if (t !== 'light' && t !== 'dark') {
-          t = 'light';
-        }
-        document.documentElement.setAttribute('data-ui-theme', t);
-      } catch (e) {}
-    })();
-  </script>
+  <script src="options-theme-init.js"></script>
   <style>
     :root {
       color-scheme: dark;
