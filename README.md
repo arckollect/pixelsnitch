@@ -19,7 +19,7 @@ Until the extension is published to the Chrome Web Store, you install it manuall
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/Arckollect/pixelsnitch.git
+   git clone https://github.com/arckollect/pixelsnitch.git
    ```
 2. Open Chrome and go to `chrome://extensions`
 3. Toggle **Developer mode** on (top-right)
