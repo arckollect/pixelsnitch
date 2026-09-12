@@ -486,15 +486,17 @@
 
   el.testBtn.addEventListener('click', async () => {
     el.testBtn.disabled = true;
+    // Render an unscaled copy of the stage. The off-screen positioning goes on
+    // a wrapper, not the stage itself: html-to-image copies the target node's
+    // computed styles into its SVG, so a `position: fixed; left: -10000px`
+    // stage would be drawn 10,000px outside the canvas (a blank PNG).
+    const host = document.createElement('div');
+    host.style.cssText = 'position:fixed; left:-10000px; top:0; pointer-events:none; z-index:-1;';
     const clone = el.stage.cloneNode(true);
     clone.style.transform = '';
     clone.style.transformOrigin = '';
-    clone.style.position = 'fixed';
-    clone.style.left = '-10000px';
-    clone.style.top = '0';
-    clone.style.pointerEvents = 'none';
-    clone.style.zIndex = '-1';
-    document.body.appendChild(clone);
+    host.appendChild(clone);
+    document.body.appendChild(host);
     try {
       if (document.fonts?.ready) await document.fonts.ready;
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -513,7 +515,7 @@
       console.error('[pixelsnitch] test render failed', err);
       flashSaved('Export failed');
     } finally {
-      clone.remove();
+      host.remove();
       el.testBtn.disabled = false;
     }
   });
