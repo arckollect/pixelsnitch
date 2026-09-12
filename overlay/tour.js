@@ -1,40 +1,15 @@
 (() => {
   const STEPS = [
-    {
-      id: 'welcome',
-      target: null,
-      tab: null,
-      title: 'Welcome to PixelSnitch',
-      body: 'Turn any tweet into a polished PNG. Tweak the look here, then hit the camera icon on any post in x.com.',
-    },
-    {
-      id: 'style',
-      target: '.tab-btn[data-tab="style"]',
-      tab: 'style',
-      title: 'Style',
-      body: 'Pick a theme, background, and what info shows on the card — timestamp, verified badge, reposted-by line, and so on.',
-    },
-    {
-      id: 'frame',
-      target: '.tab-btn[data-tab="frame"]',
-      tab: 'frame',
-      title: 'Frame',
-      body: 'Choose an aspect ratio (Auto, 1:1, 16:9, 9:16…) and adjust the post size. Advanced options let you nudge the card manually.',
-    },
-    {
-      id: 'capture',
-      target: '.tab-btn[data-tab="capture"]',
-      tab: 'capture',
-      title: 'Capture',
-      body: 'Decide what happens when you click the camera icon: download the PNG, open the editor first, or copy straight to your clipboard.',
-    },
-    {
-      id: 'finale',
-      target: null,
-      tab: null,
-      title: 'You\'re ready',
-      body: 'Open any tweet on x.com and click the camera icon — PixelSnitch does the rest. You can replay this tour any time from the footer.',
-    },
+    { id: 'welcome', target: null, tab: null, title: 'Welcome to pixelsnitch',
+      body: 'Turn any post into a polished PNG. Set your style here, then hit Capture on any post in x.com.' },
+    { id: 'style', target: '.tab-btn[data-tab="style"]', tab: 'style', title: 'Style',
+      body: 'Card theme, background, shadow and watermark — plus which parts of the original post to keep.' },
+    { id: 'layout', target: '.tab-btn[data-tab="layout"]', tab: 'layout', title: 'Layout',
+      body: 'Aspect ratio, padding, corner radius, width and post size. Nudge the position if you need to.' },
+    { id: 'export', target: '.tab-btn[data-tab="export"]', tab: 'export', title: 'Export',
+      body: 'What happens when you click Capture — download, open the editor, or copy to clipboard — plus saved presets.' },
+    { id: 'finale', target: null, tab: null, title: 'You\'re ready',
+      body: 'Open any post on x.com and click Capture — pixelsnitch does the rest. Replay this tour any time from the footer.' },
   ];
 
   let stepIdx = 0;

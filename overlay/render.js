@@ -6,7 +6,7 @@
   }
 
   async function renderNodeToBlob(node, opts = {}) {
-    const pixelRatio = opts.pixelRatio ?? 4;
+    const pixelRatio = opts.pixelRatio ?? 2;
     return await window.htmlToImage.toBlob(node, {
       pixelRatio,
       cacheBust: true,
@@ -37,13 +37,13 @@
   }
 
   async function downloadFromNode(node, meta = {}) {
-    const blob = await renderNodeToBlob(node);
+    const blob = await renderNodeToBlob(node, { pixelRatio: meta.pixelRatio });
     downloadBlob(blob, safeName(meta.handle, meta.tweetId));
     return blob;
   }
 
-  async function copyFromNode(node) {
-    const blob = await renderNodeToBlob(node);
+  async function copyFromNode(node, opts = {}) {
+    const blob = await renderNodeToBlob(node, { pixelRatio: opts.pixelRatio });
     await copyBlobToClipboard(blob);
     return blob;
   }

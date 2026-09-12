@@ -20,6 +20,7 @@
       "matches": ["https://x.com/*", "https://twitter.com/*"],
       "js": [
         "vendor/html-to-image.min.js",
+        "overlay/brand.js",
         "overlay/templates.js",
         "overlay/card.js",
         "overlay/extract.js",

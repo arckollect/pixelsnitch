@@ -1,11 +1,16 @@
 (() => {
   const STAMP = 'data-pixelsnitch';
 
-  const CAMERA_SVG = `
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>`;
+  const COBALT = '#2855FF';
+  const LIME = '#DFFF70';
+  const INK = '#171B24';
+  const MARK_SVG = window.pixelSnitchBrand.markSvg();
+
+  const FONT = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
+  function label(text) {
+    return `${MARK_SVG}<span>${text}</span>`;
+  }
 
   function getSetupState() {
     return new Promise((resolve) => {
@@ -29,40 +34,66 @@
       'height:100%',
     ].join(';');
 
+    // Brand "Capture" pill: cobalt mark + label, lime fill on success.
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.title = 'Capture as PNG (PixelSnitch)';
+    btn.title = 'Capture as PNG (pixelsnitch)';
     btn.setAttribute('aria-label', 'Capture post as PNG');
-    btn.innerHTML = CAMERA_SVG;
+    btn.innerHTML = label('Capture');
     btn.style.cssText = [
-      'background:transparent',
-      'border:none',
-      'color:rgb(113,118,123)',
+      `background:transparent`,
+      `border:1px solid rgba(40,85,255,0.35)`,
+      `color:${COBALT}`,
+      `font:600 13px/1 ${FONT}`,
       'cursor:pointer',
-      'padding:4px',
-      'border-radius:9999px',
-      'width:28px',
+      'padding:0 10px 0 8px',
       'height:28px',
+      'border-radius:9999px',
       'display:inline-flex',
       'align-items:center',
-      'justify-content:center',
-      'transition:color 120ms, background-color 120ms',
+      'gap:6px',
+      'white-space:nowrap',
+      'transition:color 120ms, background-color 120ms, border-color 120ms',
     ].join(';');
-    btn.addEventListener('mouseenter', () => {
-      btn.style.color = '#1d9bf0';
-      btn.style.backgroundColor = 'rgba(29,155,240,0.1)';
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.color = 'rgb(113,118,123)';
-      btn.style.backgroundColor = 'transparent';
-    });
+    const svg = btn.querySelector('svg');
+    if (svg) svg.style.cssText = 'height:13px;width:auto;display:block;flex:0 0 auto;';
+    const setState = (state) => {
+      if (state === 'done') {
+        btn.style.backgroundColor = LIME;
+        btn.style.borderColor = LIME;
+        btn.style.color = INK;
+      } else if (state === 'hover') {
+        btn.style.backgroundColor = 'rgba(40,85,255,0.08)';
+        btn.style.borderColor = COBALT;
+        btn.style.color = COBALT;
+      } else {
+        btn.style.backgroundColor = 'transparent';
+        btn.style.borderColor = 'rgba(40,85,255,0.35)';
+        btn.style.color = COBALT;
+      }
+    };
+    btn.addEventListener('mouseenter', () => { if (!btn.dataset.state) setState('hover'); });
+    btn.addEventListener('mouseleave', () => { if (!btn.dataset.state) setState('rest'); });
+    btn._setState = setState;
 
     wrap.appendChild(btn);
     return { wrap, btn };
   }
 
+  function flash(btn, text, ms = 1100) {
+    btn.dataset.state = 'done';
+    btn.innerHTML = `<span>${text}</span><span aria-hidden="true">✓</span>`;
+    btn._setState('done');
+    setTimeout(() => {
+      delete btn.dataset.state;
+      btn.innerHTML = label('Capture');
+      const svg = btn.querySelector('svg');
+      if (svg) svg.style.cssText = 'height:13px;width:auto;display:block;flex:0 0 auto;';
+      btn._setState('rest');
+    }, ms);
+  }
+
   async function onClick(article, btn) {
-    const original = btn.innerHTML;
     btn.style.opacity = '0.6';
     try {
       const setup = await getSetupState();
@@ -75,18 +106,19 @@
       if (settings.captureAction === 'edit') {
         await new Promise(r => chrome.storage.local.set({ pendingCapture: { data, ts: Date.now() } }, r));
         chrome.runtime.sendMessage({ type: 'pixelsnitch:open-editor' }).catch(() => {});
-        btn.innerHTML = '<span style="font-size:14px;line-height:1;">✎</span>';
-        setTimeout(() => { btn.innerHTML = original; }, 900);
+        flash(btn, 'Opening');
         return;
       }
       const mode = await window.pixelSnitchCapture.captureAndDownload(data);
-      const glyph = mode === 'clipboard' ? '📋' : '✓';
-      btn.innerHTML = `<span style="font-size:14px;line-height:1;">${glyph}</span>`;
-      setTimeout(() => { btn.innerHTML = original; }, 900);
+      flash(btn, mode === 'clipboard' ? 'Copied' : 'Saved');
     } catch (err) {
       console.error('[pixelsnitch] capture failed', err);
-      btn.innerHTML = '<span style="font-size:14px;line-height:1;">!</span>';
-      setTimeout(() => { btn.innerHTML = original; }, 1200);
+      btn.innerHTML = '<span>Failed</span>';
+      setTimeout(() => {
+        btn.innerHTML = label('Capture');
+        const svg = btn.querySelector('svg');
+        if (svg) svg.style.cssText = 'height:13px;width:auto;display:block;flex:0 0 auto;';
+      }, 1200);
     } finally {
       btn.style.opacity = '1';
     }

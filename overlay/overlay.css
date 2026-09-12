@@ -100,6 +100,7 @@
 
 /* Outer background container — the element we rasterize. Scaled via transform for preview. */
 .ps-stage {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,6 +108,24 @@
   overflow: hidden;
   will-change: transform;
 }
+
+/* Brand watermark row (only injected for Cobalt/Lime backgrounds, see card.js) */
+.ps-watermark {
+  position: absolute;
+  left: 28px;  /* overridden per-render by card.js to match the card's edges */
+  right: 28px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.ps-watermark .ps-wm-logo { height: 22px; width: auto; display: block; }
+.ps-watermark .ps-wm-tag { font-size: 13px; font-weight: 500; letter-spacing: -0.01em; white-space: nowrap; }
+.ps-watermark.ps-wm-white { color: #ffffff; }
+.ps-watermark.ps-wm-black { color: #171B24; }
 
 /* Tweet card (inside stage) */
 .ps-card {

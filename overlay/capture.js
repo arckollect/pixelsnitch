@@ -85,9 +85,10 @@
         await window.pixelSnitchRender.downloadFromNode(stage, {
           handle: data.handle,
           tweetId: data.tweetId,
+          pixelRatio: settings.exportScale,
         });
       } else {
-        await window.pixelSnitchRender.copyFromNode(stage);
+        await window.pixelSnitchRender.copyFromNode(stage, { pixelRatio: settings.exportScale });
         mode = 'clipboard';
       }
     } finally {
