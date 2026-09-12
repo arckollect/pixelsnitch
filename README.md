@@ -2,7 +2,7 @@
 
 A Chrome extension that captures X (formerly Twitter) posts as clean, customizable PNG images — straight from your timeline, with one click.
 
-> **Status:** v0.3.0 — early but working. Not yet published to the Chrome Web Store; install by loading the unpacked extension (see below).
+> **Status:** v1.0.0 — first public release. Not yet published to the Chrome Web Store; install by loading the unpacked extension (see below).
 
 ---
 
