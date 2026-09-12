@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PixelSnitch",
   "version": "1.0.0",
-  "description": "Capture X posts as customizable PNGs.",
+  "description": "Turn any X post into a clean, shareable PNG in one click. Your style, your background, your watermark.",
   "action": {
     "default_icon": {
       "16": "icons/16.png",
