@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Brand assets exception
+
+The PixelSnitch name, wordmark, logo mark, app icon, and the files in the
+brand/ directory (and the copies of them embedded in overlay/brand.js and
+icons/) are trademarks and copyrighted works of Arckollect and are NOT
+licensed under the MIT License above. They may not be used to identify
+forks, modified versions, or other products without written permission.
+You may keep them in unmodified copies of this extension for the purpose
+of running it.

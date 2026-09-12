@@ -64,7 +64,9 @@ If you discover a security vulnerability, please **do not** open a public issue.
 
 ## License
 
-PixelSnitch is released under the [MIT License](LICENSE).
+PixelSnitch's code is released under the [MIT License](LICENSE).
+
+**Brand assets are not.** The PixelSnitch name, wordmark, logo mark, app icon, and everything in [`brand/`](brand/) are trademarks of Arckollect and are excluded from the MIT grant — see the brand assets exception at the end of [LICENSE](LICENSE). If you fork or modify the extension, please use your own name and artwork.
 
 Third-party code and assets bundled with this extension are listed in [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES).
 
